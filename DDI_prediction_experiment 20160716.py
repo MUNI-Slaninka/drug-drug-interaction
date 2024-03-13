@@ -596,7 +596,7 @@ def ensemble_scoring(real_matrix, multiple_matrix, testPosition, weights, cf1, c
         vector = []
         for j in range(0, len(multiple_matrix)):
             vector.append(multiple_matrix[j][testPosition[i][0], testPosition[i][1]])
-        vector = np.array(vector)
+        vector = np.array(vector).reshape(1, -1)
 
         aa = cf1.predict_proba(vector)
         print(aa)
