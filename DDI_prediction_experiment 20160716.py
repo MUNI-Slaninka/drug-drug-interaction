@@ -583,8 +583,8 @@ def ensemble_scoring(real_matrix, multiple_matrix, testPosition, weights, cf1, c
         for j in range(0, len(testPosition)):
             predicted_probability.append(predict_matrix[testPosition[j][0], testPosition[j][1]])
         normalize = MinMaxScaler()
-        predicted_probability = normalize.fit_transform(predicted_probability)
-        predicted_probability = np.array(predicted_probability)
+        predicted_probability = normalize.fit_transform(np.array(predicted_probability).reshape(-1, 1))
+        predicted_probability = np.array(predicted_probability).reshape(-1)
         multiple_prediction.append(predicted_probability)
     ensemble_prediction = np.zeros(len(real_labels))
     for i in range(0, len(multiple_matrix)):
@@ -604,9 +604,9 @@ def ensemble_scoring(real_matrix, multiple_matrix, testPosition, weights, cf1, c
         ensemble_prediction_cf2[i] = (cf2.predict_proba(vector))[0][1]
 
     normalize = MinMaxScaler()
-    ensemble_prediction = normalize.fit_transform(ensemble_prediction)
+    ensemble_prediction = normalize.fit_transform(np.array(ensemble_prediction).reshape(-1, 1))
 
-    result = calculate_metric_score(real_labels, ensemble_prediction)
+    result = calculate_metric_score(real_labels, (np.array(ensemble_prediction). reshape(-1)))
     result_cf1 = calculate_metric_score(real_labels, ensemble_prediction_cf1)
     result_cf2 = calculate_metric_score(real_labels, ensemble_prediction_cf2)
 
