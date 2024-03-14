@@ -13,10 +13,10 @@ import networkx as nx
 import math
 
 from utilities import model_evaluation, holdout_by_link
+from model import Model
 
 
-class ensemble_model:
-    train_drug_drug_matrix = None
+class EnsembleModel(Model):
     chem_sim_similarity_matrix = None
     target_similarity_matrix = None
     transporter_similarity_matrix = None
@@ -26,17 +26,11 @@ class ensemble_model:
     label_similarity_matrix = None
     offlabel_similarity_matrix = None
 
-    def __init__(self,
-                 train_drug_drug_matrix,
-                 chem_sim_similarity_matrix,
-                 target_similarity_matrix,
-                 transporter_similarity_matrix,
-                 enzyme_similarity_matrix,
-                 pathway_similarity_matrix,
-                 indication_similarity_matrix,
-                 label_similarity_matrix,
-                 offlabel_similarity_matrix):
+    def __init__(self, train_drug_drug_matrix, chem_sim_similarity_matrix, target_similarity_matrix,
+                 transporter_similarity_matrix, enzyme_similarity_matrix, pathway_similarity_matrix,
+                 indication_similarity_matrix, label_similarity_matrix, offlabel_similarity_matrix):
 
+        super().__init__()
         self.train_drug_drug_matrix = train_drug_drug_matrix
         self.chem_sim_similarity_matrix = chem_sim_similarity_matrix
         self.target_similarity_matrix = target_similarity_matrix
@@ -215,7 +209,7 @@ class ensemble_model:
 
         return multiple_matrix, multiple_result
 
-    def determine_ensemble_parameter(self):
+    def train(self):
         full_drug_drug_matrix = copy.deepcopy(self.train_drug_drug_matrix)
         train_drug_drug_matrix, test_position = holdout_by_link(copy.deepcopy(full_drug_drug_matrix), 0.2, 1)
         self.train_drug_drug_matrix = train_drug_drug_matrix
@@ -282,7 +276,7 @@ class ensemble_model:
             multiple_prediction.append(np.array(predicted_probability).reshape(-1))
 
         #################################################################################################
-        toolbox.register("evaluate", ensemble_model.fit_function, parameter1=real_labels, parameter2=multiple_prediction)
+        toolbox.register("evaluate", EnsembleModel.fit_function, parameter1=real_labels, parameter2=multiple_prediction)
         toolbox.register("mate", tools.cxTwoPoint)
         toolbox.register("mutate", tools.mutFlipBit, indpb=0.05)
         toolbox.register("select", tools.selTournament, tournsize=3)

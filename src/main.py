@@ -1,7 +1,7 @@
 from matplotlib.pyplot import *
 import copy
 import random
-from ensemble import ensemble_model
+from ensemble import EnsembleModel
 from utilities import load_csv, ensemble_scoring
 
 
@@ -36,17 +36,17 @@ def cross_validation(drug_drug_matrix, CV_num, seed):
             train_drug_drug_matrix[testLinkPosition[i, 1], testLinkPosition[i, 0]] = 0
             testPosition = list(testLinkPosition) + list(nonLinksPosition)
         #  GA
-        model = ensemble_model(copy.deepcopy(train_drug_drug_matrix),
-                               load_csv('dataset/chem_Jacarrd_sim.csv', 'float'),
-                               load_csv('dataset/target_Jacarrd_sim.csv', 'float'),
-                               load_csv('dataset/transporter_Jacarrd_sim.csv', 'float'),
-                               load_csv('dataset/enzyme_Jacarrd_sim.csv', 'float'),
-                               load_csv('dataset/pathway_Jacarrd_sim.csv', 'float'),
-                               load_csv('dataset/indication_Jacarrd_sim.csv', 'float'),
-                               load_csv('dataset/sideeffect_Jacarrd_sim.csv', 'float'),
-                               load_csv('dataset/offsideeffect_Jacarrd_sim.csv', 'float'))
+        model = EnsembleModel(copy.deepcopy(train_drug_drug_matrix),
+                              load_csv('dataset/chem_Jacarrd_sim.csv', 'float'),
+                              load_csv('dataset/target_Jacarrd_sim.csv', 'float'),
+                              load_csv('dataset/transporter_Jacarrd_sim.csv', 'float'),
+                              load_csv('dataset/enzyme_Jacarrd_sim.csv', 'float'),
+                              load_csv('dataset/pathway_Jacarrd_sim.csv', 'float'),
+                              load_csv('dataset/indication_Jacarrd_sim.csv', 'float'),
+                              load_csv('dataset/sideeffect_Jacarrd_sim.csv', 'float'),
+                              load_csv('dataset/offsideeffect_Jacarrd_sim.csv', 'float'))
 
-        weights, cf1, cf2 = model.determine_ensemble_parameter()
+        weights, cf1, cf2 = model.train()
         # cf1,cf2=internal_determine_parameter(copy.deepcopy(train_drug_drug_matrix))
 
         [multiple_predict_matrix, multiple_predict_results] = model.calculate(copy.deepcopy(drug_drug_matrix), testPosition)
