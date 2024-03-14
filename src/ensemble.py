@@ -12,7 +12,6 @@ from sklearn import linear_model
 import networkx as nx
 import math
 
-from utilities import model_evaluation, holdout_by_link
 from model import Model
 
 
@@ -30,7 +29,7 @@ class EnsembleModel(Model):
                  transporter_similarity_matrix, enzyme_similarity_matrix, pathway_similarity_matrix,
                  indication_similarity_matrix, label_similarity_matrix, offlabel_similarity_matrix):
 
-        super().__init__()
+        super().__init__(train_drug_drug_matrix)
         self.train_drug_drug_matrix = train_drug_drug_matrix
         self.chem_sim_similarity_matrix = chem_sim_similarity_matrix
         self.target_similarity_matrix = target_similarity_matrix
@@ -46,42 +45,42 @@ class EnsembleModel(Model):
         multiple_result = []
         print('***************************Calculating*****************************')
         predict_matrix = self._neighbor_method(self.chem_sim_similarity_matrix)
-        results = model_evaluation(full_drug_drug_matrix, predict_matrix, test_position, 'chem_neighbor')
+        results = super().evaluate(full_drug_drug_matrix, predict_matrix, test_position, 'chem_neighbor')
         multiple_result.append(results)
         multiple_matrix.append(predict_matrix)
 
         predict_matrix = self._neighbor_method(self.target_similarity_matrix)
-        results = model_evaluation(full_drug_drug_matrix, predict_matrix, test_position, 'target_neighbor')
+        results = super().evaluate(full_drug_drug_matrix, predict_matrix, test_position, 'target_neighbor')
         multiple_result.append(results)
         multiple_matrix.append(predict_matrix)
 
         predict_matrix = self._neighbor_method(self.transporter_similarity_matrix)
-        results = model_evaluation(full_drug_drug_matrix, predict_matrix, test_position, 'transporter_neighbor')
+        results = super().evaluate(full_drug_drug_matrix, predict_matrix, test_position, 'transporter_neighbor')
         multiple_result.append(results)
         multiple_matrix.append(predict_matrix)
 
         predict_matrix = self._neighbor_method(self.enzyme_similarity_matrix)
-        results = model_evaluation(full_drug_drug_matrix, predict_matrix, test_position, 'enzyme_neighbor')
+        results = super().evaluate(full_drug_drug_matrix, predict_matrix, test_position, 'enzyme_neighbor')
         multiple_result.append(results)
         multiple_matrix.append(predict_matrix)
 
         predict_matrix = self._neighbor_method(self.pathway_similarity_matrix)
-        results = model_evaluation(full_drug_drug_matrix, predict_matrix, test_position, 'pathway_neighbor')
+        results = super().evaluate(full_drug_drug_matrix, predict_matrix, test_position, 'pathway_neighbor')
         multiple_result.append(results)
         multiple_matrix.append(predict_matrix)
 
         predict_matrix = self._neighbor_method(self.indication_similarity_matrix)
-        results = model_evaluation(full_drug_drug_matrix, predict_matrix, test_position, 'indication_neighbor')
+        results = super().evaluate(full_drug_drug_matrix, predict_matrix, test_position, 'indication_neighbor')
         multiple_result.append(results)
         multiple_matrix.append(predict_matrix)
 
         predict_matrix = self._neighbor_method(self.label_similarity_matrix)
-        results = model_evaluation(full_drug_drug_matrix, predict_matrix, test_position, 'label_neighbor')
+        results = super().evaluate(full_drug_drug_matrix, predict_matrix, test_position, 'label_neighbor')
         multiple_result.append(results)
         results = multiple_matrix.append(predict_matrix)
 
         predict_matrix = self._neighbor_method(self.offlabel_similarity_matrix)
-        results = model_evaluation(full_drug_drug_matrix, predict_matrix, test_position, 'offlabel_neighbor')
+        results = super().evaluate(full_drug_drug_matrix, predict_matrix, test_position, 'offlabel_neighbor')
         multiple_result.append(results)
         multiple_matrix.append(predict_matrix)
 
@@ -89,121 +88,121 @@ class EnsembleModel(Model):
         common_similarity_matrix, AA_similarity_matrix, RA_similarity_matrix, Katz_similarity_matrix, ACT_similarity_matrix, RWR_similarity_matrix = self._topology_similarity_matrix()
         predict_matrix = self._neighbor_method(common_similarity_matrix)
         # predict_matrix=common_similarity_matrix
-        results = model_evaluation(full_drug_drug_matrix, predict_matrix, test_position, 'common_similarity_neighbor')
+        results = super().evaluate(full_drug_drug_matrix, predict_matrix, test_position, 'common_similarity_neighbor')
         multiple_result.append(results)
         multiple_matrix.append(predict_matrix)
 
         predict_matrix = self._neighbor_method(AA_similarity_matrix)
         # predict_matrix=AA_similarity_matrix
-        results = model_evaluation(full_drug_drug_matrix, predict_matrix, test_position, 'AA_similarity_neighbor')
+        results = super().evaluate(full_drug_drug_matrix, predict_matrix, test_position, 'AA_similarity_neighbor')
         multiple_result.append(results)
         multiple_matrix.append(predict_matrix)
 
         predict_matrix = self._neighbor_method(RA_similarity_matrix)
         # predict_matrix=RA_similarity_matrix
-        results = model_evaluation(full_drug_drug_matrix, predict_matrix, test_position, 'RA_similarity_neighbor')
+        results = super().evaluate(full_drug_drug_matrix, predict_matrix, test_position, 'RA_similarity_neighbor')
         multiple_result.append(results)
         multiple_matrix.append(predict_matrix)
 
         predict_matrix = self._neighbor_method(Katz_similarity_matrix)
         # predict_matrix=Katz_similarity_matrix
-        results = model_evaluation(full_drug_drug_matrix, predict_matrix, test_position, 'Katz_similarity_neighbor')
+        results = super().evaluate(full_drug_drug_matrix, predict_matrix, test_position, 'Katz_similarity_neighbor')
         multiple_result.append(results)
         multiple_matrix.append(predict_matrix)
 
         predict_matrix = self._neighbor_method(ACT_similarity_matrix)
         # predict_matrix=ACT_similarity_matrix
-        results = model_evaluation(full_drug_drug_matrix, predict_matrix, test_position, 'ACT_similarity_neighbor')
+        results = super().evaluate(full_drug_drug_matrix, predict_matrix, test_position, 'ACT_similarity_neighbor')
         multiple_result.append(results)
         multiple_matrix.append(predict_matrix)
 
         predict_matrix = self._neighbor_method(RWR_similarity_matrix)
         # predict_matrix=RWR_similarity_matrix
-        results = model_evaluation(full_drug_drug_matrix, predict_matrix, test_position, 'RWR_similarity_neighbor')
+        results = super().evaluate(full_drug_drug_matrix, predict_matrix, test_position, 'RWR_similarity_neighbor')
         multiple_result.append(results)
         multiple_matrix.append(predict_matrix)
 
         # print('*************************************************************************************************************************************')
         predict_matrix = self._label_propagation(self.chem_sim_similarity_matrix)
-        results = model_evaluation(full_drug_drug_matrix, predict_matrix, test_position, 'chem_label')
+        results = super().evaluate(full_drug_drug_matrix, predict_matrix, test_position, 'chem_label')
         multiple_result.append(results)
         multiple_matrix.append(predict_matrix)  # 12
 
         predict_matrix = self._label_propagation(self.target_similarity_matrix)
-        results = model_evaluation(full_drug_drug_matrix, predict_matrix, test_position, 'target_label')
+        results = super().evaluate(full_drug_drug_matrix, predict_matrix, test_position, 'target_label')
         multiple_result.append(results)
         multiple_matrix.append(predict_matrix)
 
         predict_matrix = self._label_propagation(self.transporter_similarity_matrix)
-        results = model_evaluation(full_drug_drug_matrix, predict_matrix, test_position, 'transporter_label')
+        results = super().evaluate(full_drug_drug_matrix, predict_matrix, test_position, 'transporter_label')
         multiple_result.append(results)
         multiple_matrix.append(predict_matrix)
 
         predict_matrix = self._label_propagation(self.enzyme_similarity_matrix)
-        results = model_evaluation(full_drug_drug_matrix, predict_matrix, test_position, 'enzyme_label')
+        results = super().evaluate(full_drug_drug_matrix, predict_matrix, test_position, 'enzyme_label')
         multiple_result.append(results)
         multiple_matrix.append(predict_matrix)
 
         predict_matrix = self._label_propagation(self.pathway_similarity_matrix)
-        results = model_evaluation(full_drug_drug_matrix, predict_matrix, test_position, 'pathway_label')
+        results = super().evaluate(full_drug_drug_matrix, predict_matrix, test_position, 'pathway_label')
         multiple_result.append(results)
         multiple_matrix.append(predict_matrix)
 
         predict_matrix = self._label_propagation(self.indication_similarity_matrix)
-        results = model_evaluation(full_drug_drug_matrix, predict_matrix, test_position, 'indication_label')
+        results = super().evaluate(full_drug_drug_matrix, predict_matrix, test_position, 'indication_label')
         multiple_result.append(results)
         multiple_matrix.append(predict_matrix)
 
         predict_matrix = self._label_propagation(self.label_similarity_matrix)
-        results = model_evaluation(full_drug_drug_matrix, predict_matrix, test_position, 'label_label')
+        results = super().evaluate(full_drug_drug_matrix, predict_matrix, test_position, 'label_label')
         multiple_result.append(results)
         multiple_matrix.append(predict_matrix)
 
         predict_matrix = self._label_propagation(self.offlabel_similarity_matrix)
-        results = model_evaluation(full_drug_drug_matrix, predict_matrix, test_position, 'offlabel_label')
+        results = super().evaluate(full_drug_drug_matrix, predict_matrix, test_position, 'offlabel_label')
         multiple_result.append(results)
         multiple_matrix.append(predict_matrix)  # 14
 
         # print('*************************************************************************************************************************************')
         predict_matrix = self._label_propagation(common_similarity_matrix)
         # predict_matrix=common_similarity_matrix
-        results = model_evaluation(full_drug_drug_matrix, predict_matrix, test_position, 'common_similarity_label')
+        results = super().evaluate(full_drug_drug_matrix, predict_matrix, test_position, 'common_similarity_label')
         multiple_result.append(results)
         multiple_matrix.append(predict_matrix)
 
         predict_matrix = self._label_propagation(AA_similarity_matrix)
         # predict_matrix=AA_similarity_matrix
-        results = model_evaluation(full_drug_drug_matrix, predict_matrix, test_position, 'AA_similarity_label')
+        results = super().evaluate(full_drug_drug_matrix, predict_matrix, test_position, 'AA_similarity_label')
         multiple_result.append(results)
         multiple_matrix.append(predict_matrix)
 
         predict_matrix = self._label_propagation(RA_similarity_matrix)
         # predict_matrix=RA_similarity_matrix
-        results = model_evaluation(full_drug_drug_matrix, predict_matrix, test_position, 'RA_similarity_label')
+        results = super().evaluate(full_drug_drug_matrix, predict_matrix, test_position, 'RA_similarity_label')
         multiple_result.append(results)
         multiple_matrix.append(predict_matrix)
 
         predict_matrix = self._label_propagation(Katz_similarity_matrix)
         # predict_matrix=Katz_similarity_matrix
-        results = model_evaluation(full_drug_drug_matrix, predict_matrix, test_position, 'Katz_similarity_label')
+        results = super().evaluate(full_drug_drug_matrix, predict_matrix, test_position, 'Katz_similarity_label')
         multiple_result.append(results)
         multiple_matrix.append(predict_matrix)
 
         predict_matrix = self._label_propagation(ACT_similarity_matrix)
         # predict_matrix=ACT_similarity_matrix
-        results = model_evaluation(full_drug_drug_matrix, predict_matrix, test_position, 'ACT_similarity_label')
+        results = super().evaluate(full_drug_drug_matrix, predict_matrix, test_position, 'ACT_similarity_label')
         multiple_result.append(results)
         multiple_matrix.append(predict_matrix)
 
         predict_matrix = self._label_propagation(RWR_similarity_matrix)
         # predict_matrix=RWR_similarity_matrix
-        results = model_evaluation(full_drug_drug_matrix, predict_matrix, test_position, 'RWR_similarity_label')
+        results = super().evaluate(full_drug_drug_matrix, predict_matrix, test_position, 'RWR_similarity_label')
         multiple_result.append(results)
         multiple_matrix.append(predict_matrix)
 
         # print('*************************************************************************************************************************************')
         predict_matrix = self._disturb_matrix_method()
-        results = model_evaluation(full_drug_drug_matrix, predict_matrix, test_position, 'disturb_matrix_label')
+        results = super().evaluate(full_drug_drug_matrix, predict_matrix, test_position, 'disturb_matrix_label')
         multiple_result.append(results)
         multiple_matrix.append(predict_matrix)
 
@@ -211,7 +210,7 @@ class EnsembleModel(Model):
 
     def train(self):
         full_drug_drug_matrix = copy.deepcopy(self.train_drug_drug_matrix)
-        train_drug_drug_matrix, test_position = holdout_by_link(copy.deepcopy(full_drug_drug_matrix), 0.2, 1)
+        train_drug_drug_matrix, test_position = super()._split_training_data(0.2, 1)
         self.train_drug_drug_matrix = train_drug_drug_matrix
         [multiple_matrix, multiple_result] = self.calculate(copy.deepcopy(full_drug_drug_matrix), test_position)
         weights = self._get_paramter(copy.deepcopy(full_drug_drug_matrix), multiple_matrix, test_position)
@@ -238,6 +237,47 @@ class EnsembleModel(Model):
         self.train_drug_drug_matrix = full_drug_drug_matrix
         return weights, clf1, clf2
 
+    @staticmethod
+    def ensemble_scoring(real_matrix, multiple_matrix, test_position, weights, cf1, cf2):
+        real_labels = []
+        for i in range(0, len(test_position)):
+            real_labels.append(real_matrix[test_position[i][0], test_position[i][1]])
+
+        multiple_prediction = []
+        for i in range(0, len(multiple_matrix)):
+            predicted_probability = []
+            predict_matrix = multiple_matrix[i]
+            for j in range(0, len(test_position)):
+                predicted_probability.append(predict_matrix[test_position[j][0], test_position[j][1]])
+            normalize = MinMaxScaler()
+            predicted_probability = normalize.fit_transform(np.array(predicted_probability).reshape(-1, 1))
+            predicted_probability = np.array(predicted_probability).reshape(-1)
+            multiple_prediction.append(predicted_probability)
+        ensemble_prediction = np.zeros(len(real_labels))
+        for i in range(0, len(multiple_matrix)):
+            ensemble_prediction = ensemble_prediction + weights[i] * multiple_prediction[i]
+
+        ensemble_prediction_cf1 = np.zeros(len(real_labels))
+        ensemble_prediction_cf2 = np.zeros(len(real_labels))
+        for i in range(0, len(test_position)):
+            vector = []
+            for j in range(0, len(multiple_matrix)):
+                vector.append(multiple_matrix[j][test_position[i][0], test_position[i][1]])
+            vector = np.array(vector).reshape(1, -1)
+
+            aa = cf1.predict_proba(vector)
+            print(aa)
+            ensemble_prediction_cf1[i] = (cf1.predict_proba(vector))[0][1]
+            ensemble_prediction_cf2[i] = (cf2.predict_proba(vector))[0][1]
+
+        normalize = MinMaxScaler()
+        ensemble_prediction = normalize.fit_transform(np.array(ensemble_prediction).reshape(-1, 1))
+
+        result = Model.calculate_metric_score(real_labels, (np.array(ensemble_prediction).reshape(-1)))
+        result_cf1 = Model.calculate_metric_score(real_labels, ensemble_prediction_cf1)
+        result_cf2 = Model.calculate_metric_score(real_labels, ensemble_prediction_cf2)
+
+        return result, result_cf1, result_cf2
     @staticmethod
     def fit_function(individual, parameter1, parameter2):
         real_labels = parameter1

@@ -2,7 +2,7 @@ from matplotlib.pyplot import *
 import copy
 import random
 from ensemble import EnsembleModel
-from utilities import load_csv, ensemble_scoring
+from utilities import load_csv
 
 
 def cross_validation(drug_drug_matrix, CV_num, seed):
@@ -53,7 +53,7 @@ def cross_validation(drug_drug_matrix, CV_num, seed):
 
         # logstic weight
 
-        ensemble_results, ensemble_results_cf1, ensemble_results_cf2 = ensemble_scoring(copy.deepcopy(drug_drug_matrix),
+        ensemble_results, ensemble_results_cf1, ensemble_results_cf2 = model.ensemble_scoring(copy.deepcopy(drug_drug_matrix),
                                                                                         multiple_predict_matrix,
                                                                                         testPosition, weights, cf1, cf2)
         for i in range(0, len(multiple_predict_results)):

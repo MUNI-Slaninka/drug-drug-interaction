@@ -11,15 +11,19 @@ from sklearn.metrics import recall_score
 from sklearn.metrics import f1_score
 from sklearn.metrics import precision_score
 
+
 class Model:
     drug_drug_matrix = None
     train_drug_drug_matrix = None
     links = None
+    links_n = None
     test_position = None
+    fold_num = None
 
-    def __init__(self):
-        pass
+    def __init__(self, drug_drug_matrix):
+        self.drug_drug_matrix = drug_drug_matrix
 
+    @staticmethod
     def evaluate(real_matrix, predict_matrix, test_position, feature_name):  # compute cross validation results
         real_labels = []
         predicted_probability = []
@@ -80,7 +84,7 @@ class Model:
                     matrix_data.append(list(map(float, row_vector[1:])))
         return np.matrix(matrix_data)
 
-    def _find_links(self, CV_num, seed):
+    def _find_links(self):
         link_number = 0
         link_position = []
         non_links_position = []  # all non-link position
@@ -92,13 +96,10 @@ class Model:
                 else:
                     non_links_position.append([i, j])
 
-        link_position = np.array(link_position)
-        np.random.seed(seed)
-        index = np.arange(0, link_number)
-        np.random.shuffle(index)
+        self.links_n = link_number
+        self.links = np.array(link_position)
+        self.non_links = np.array(non_links_position)
 
-        fold_num = link_number // CV_num
-        print(fold_num)
 
     def _split_training_data(self, ratio, seed):
         link_number = 0
@@ -131,6 +132,9 @@ class Model:
         self.train_drug_drug_matrix = train_drug_drug_matrix
         self.test_position = test_position
 
+        return train_drug_drug_matrix, test_position
+
+    @staticmethod
     def _calculate_metric_score(real_labels, predict_score):
         precision, recall, pr_thresholds = precision_recall_curve(real_labels, predict_score)
         aupr_score = auc(recall, precision)
@@ -162,4 +166,35 @@ class Model:
         results = [auc_score, aupr_score, precision, recall, accuracy, f]
         return results
 
+    @staticmethod
+    def calculate_metric_score(real_labels, predict_score):
+        precision, recall, pr_thresholds = precision_recall_curve(real_labels, predict_score)
+        aupr_score = auc(recall, precision)
+
+        all_F_measure = np.zeros(len(pr_thresholds))
+        for k in range(0, len(pr_thresholds)):
+            if (precision[k] + precision[k]) > 0:
+                all_F_measure[k] = 2 * precision[k] * recall[k] / (precision[k] + recall[k])
+            else:
+                all_F_measure[k] = 0
+        max_index = all_F_measure.argmax()
+        threshold = pr_thresholds[max_index]
+        fpr, tpr, auc_thresholds = roc_curve(real_labels, predict_score)
+        auc_score = auc(fpr, tpr)
+
+        predicted_score = np.zeros(len(real_labels))
+        predicted_score[predict_score > threshold] = 1
+
+        f = f1_score(real_labels, predicted_score)
+        accuracy = accuracy_score(real_labels, predicted_score)
+        precision = precision_score(real_labels, predicted_score)
+        recall = recall_score(real_labels, predicted_score)
+        print('results for feature:' + 'weighted_scoring')
+        print(
+            '************************AUC score:%.3f, AUPR score:%.3f, recall score:%.3f, precision score:%.3f, accuracy:%.3f************************' % (
+                auc_score, aupr_score, recall, precision, accuracy))
+        auc_score, aupr_score, precision, recall, accuracy, f = ("%.4f" % auc_score), ("%.4f" % aupr_score), (
+                    "%.4f" % precision), ("%.4f" % recall), ("%.4f" % accuracy), ("%.4f" % f)
+        results = [auc_score, aupr_score, precision, recall, accuracy, f]
+        return results
 
