@@ -42,16 +42,16 @@ def transform_matrices_keep_lower(*matrices):
 
 def create_data():
     # Load all datasets
-    chem = load_csv('dataset/chem_Jacarrd_sim.csv', 'float')
-    target = load_csv('dataset/target_Jacarrd_sim.csv', 'float')
-    transporter = load_csv('dataset/transporter_Jacarrd_sim.csv', 'float')
-    enzyme = load_csv('dataset/enzyme_Jacarrd_sim.csv', 'float')
-    pathway = load_csv('dataset/pathway_Jacarrd_sim.csv', 'float'),
-    indication = load_csv('dataset/indication_Jacarrd_sim.csv', 'float')
-    side_effect = load_csv('dataset/sideeffect_Jacarrd_sim.csv', 'float')
-    offside_effect = load_csv('dataset/offsideeffect_Jacarrd_sim.csv', 'float')
+    chem = np.array(load_csv('dataset/chem_Jacarrd_sim.csv', 'float'))
+    target = np.array(load_csv('dataset/target_Jacarrd_sim.csv', 'float'))
+    transporter = np.array(load_csv('dataset/transporter_Jacarrd_sim.csv', 'float'))
+    enzyme = np.array(load_csv('dataset/enzyme_Jacarrd_sim.csv', 'float'))
+    pathway = np.array(load_csv('dataset/pathway_Jacarrd_sim.csv', 'float'))
+    indication = np.array(load_csv('dataset/indication_Jacarrd_sim.csv', 'float'))
+    side_effect = np.array(load_csv('dataset/sideeffect_Jacarrd_sim.csv', 'float'))
+    offside_effect = np.array(load_csv('dataset/offsideeffect_Jacarrd_sim.csv', 'float'))
 
-    X = transform_matrices_keep_lower(chem, target, transporter, enzyme, pathway, indication, side_effect, offside_effect)
+    X = transform_matrices_keep_lower(chem, target, transporter, enzyme, indication, side_effect, offside_effect)
     Y = transform_matrices_keep_lower(load_csv('dataset/drug_drug_matrix.csv', 'float'))
     return X, Y
 
