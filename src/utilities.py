@@ -26,9 +26,13 @@ def transform_matrices(*matrices):
 
 
 # Transforms data without duplicates
-def transform_matrices_keep_lower(*matrices):
-    stacked_matrices = np.stack(matrices, axis=0)
-    num_matrices, rows, cols = stacked_matrices.shape
+def transform_matrices_keep_lower(*matrices, stack=True):
+    if stack:
+        stacked_matrices = np.stack(matrices, axis=0)
+        num_matrices, rows, cols = stacked_matrices.shape
+    else:
+        stacked_matrices = np.array(matrices)
+        num_matrices, rows, cols = stacked_matrices.shape
 
     # Create a mask to identify the lower triangle of each input matrix
     lower_triangle_mask = np.tril(np.ones((rows, cols), dtype=bool))
@@ -40,19 +44,19 @@ def transform_matrices_keep_lower(*matrices):
     return reshaped_matrices
 
 
-def create_data():
+def create_data(folder="dataset"):
     # Load all datasets
-    chem = np.array(load_csv('dataset/chem_Jacarrd_sim.csv', 'float'))
-    target = np.array(load_csv('dataset/target_Jacarrd_sim.csv', 'float'))
-    transporter = np.array(load_csv('dataset/transporter_Jacarrd_sim.csv', 'float'))
-    enzyme = np.array(load_csv('dataset/enzyme_Jacarrd_sim.csv', 'float'))
-    pathway = np.array(load_csv('dataset/pathway_Jacarrd_sim.csv', 'float'))
-    indication = np.array(load_csv('dataset/indication_Jacarrd_sim.csv', 'float'))
-    side_effect = np.array(load_csv('dataset/sideeffect_Jacarrd_sim.csv', 'float'))
-    offside_effect = np.array(load_csv('dataset/offsideeffect_Jacarrd_sim.csv', 'float'))
+    chem = np.array(load_csv(folder + '/chem_Jacarrd_sim.csv', 'float'))
+    target = np.array(load_csv(folder + '/target_Jacarrd_sim.csv', 'float'))
+    transporter = np.array(load_csv(folder + '/transporter_Jacarrd_sim.csv', 'float'))
+    enzyme = np.array(load_csv(folder + '/enzyme_Jacarrd_sim.csv', 'float'))
+    pathway = np.array(load_csv(folder + '/pathway_Jacarrd_sim.csv', 'float'))
+    indication = np.array(load_csv(folder + '/indication_Jacarrd_sim.csv', 'float'))
+    side_effect = np.array(load_csv(folder + '/sideeffect_Jacarrd_sim.csv', 'float'))
+    offside_effect = np.array(load_csv(folder + '/offsideeffect_Jacarrd_sim.csv', 'float'))
 
     X = transform_matrices_keep_lower(chem, target, transporter, enzyme, indication, side_effect, offside_effect)
-    Y = transform_matrices_keep_lower(load_csv('dataset/drug_drug_matrix.csv', 'float'))
+    Y = transform_matrices_keep_lower(load_csv(folder + '/drug_drug_matrix.csv', 'float'), stack=False)
     return X, Y
 
 

@@ -3,14 +3,20 @@ import torch
 import torch.nn as nn
 import torch.optim as optim
 from sklearn.model_selection import train_test_split
-from sklearn.metrics import accuracy_score
+from sklearn.metrics import matthews_corrcoef
+from src.utilities import create_data
 
+X, y = create_data(folder="../dataset")
+y = y.flatten().astype(int)
+
+"""
 df = pd.read_json("jaccard.json")
 df.drop(["DRUG_ID1", "DRUG_ID2"], inplace=True, axis=1)
 
 # Define features (X) and target variable (y)
-X = df.drop('INTERACTION', axis=1).values  # Convert DataFrame to numpy array
-y = df['INTERACTION'].values  # Convert DataFrame to numpy array
+X = df.drop('INTERACTION', axis=1)  # Features
+y = df['INTERACTION']  # Target variable
+"""
 
 # Split data into train and test sets
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
@@ -25,17 +31,15 @@ y_test = torch.tensor(y_test, dtype=torch.long)
 class MLP(nn.Module):
     def __init__(self):
         super(MLP, self).__init__()
-        self.fc1 = nn.Linear(7, 256)  # Input layer to hidden layer
-        self.fc2 = nn.Linear(256, 128)  # Hidden layer to hidden layer
-        self.fc3 = nn.Linear(128, 64)    # Hidden layer to output layer
-        self.fc4 = nn.Linear(64, 2)    # Hidden layer to output layer
+        self.fc1 = nn.Linear(7, 100)  # Input layer to hidden layer
+        self.fc2 = nn.Linear(100, 50)  # Hidden layer to hidden layer
+        self.fc3 = nn.Linear(50, 2)    # Hidden layer to output layer
         self.relu = nn.ReLU()          # Activation function
 
     def forward(self, x):
         x = self.relu(self.fc1(x))
         x = self.relu(self.fc2(x))
-        x = self.relu(self.fc3(x))
-        x = self.fc4(x)
+        x = self.fc3(x)
         return x
 
 # Instantiate the model, loss function, and optimizer
@@ -59,5 +63,5 @@ with torch.no_grad():
     model.eval()
     outputs = model(X_test)
     _, predicted = torch.max(outputs, 1)
-    accuracy = accuracy_score(y_test.numpy(), predicted.numpy())
-    print("Accuracy:", accuracy)
+    accuracy = matthews_corrcoef(y_test.numpy(), predicted.numpy())
+    print("Matthews Correlation Coefficient:", accuracy)
